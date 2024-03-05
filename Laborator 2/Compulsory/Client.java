@@ -1,8 +1,4 @@
-enum ClientType {
-        REGULAR, PREMIUM;
-    }
-
-    public class Client {
+public class Client {
         private String name;
         private int startTime;
         private int endTime;
