@@ -42,6 +42,13 @@ public class Problem {
         return vehicles.toArray(new Vehicle[0]);
     }
 
+    /**
+     * This method generate the allocation of clients to vehicles
+     * Firstly, for every client I find the nearest vehicle throught the findNearestVehicle method
+     * Then I verify if the client is already allocated in that or another car
+     * If the client isn't allocated and the vehicle isn't null then I alocate the client to nearestVehicle and I add that client to the list of client for that vehicle
+     */
+    
     public void allocateClientsToVehicles() {
     //sort StartTime
         Vehicle nearestVehicle;
@@ -64,6 +71,16 @@ public class Problem {
 
     }
 
+    /**
+     * Greedy algoritm
+     * For that specific client I find the nearest vehicle
+     * Firstly, I initiate MinDistance with Integer.MAX_VALUE and nearestVehicle with null
+     * I look throught the list of vehicles and I generate a random distance between [Integer.MIN_VALUE, Integer.MAX_VALUE]
+     * If that distance is less than minDistance, then I modify minDistance and nearestVehicle
+     * @param client
+     * @return nearest vehicle
+     */
+    
     private Vehicle findNearestVehicle(Client client) {
         double minDistance = Integer.MAX_VALUE;//max distance
         Vehicle nearestVehicle = null;
