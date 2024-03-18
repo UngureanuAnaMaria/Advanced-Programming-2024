@@ -1,5 +1,3 @@
-import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -28,6 +26,7 @@ public class Main {
         //System.out.println(vehicle2.getCapacityOrFlightDuration());
         depot2.setVehicles(vehicle2);
 
+        /*
         int[][] costMatrix = {
                 {0, 1, 0, 2, 0, 0},
                 {1, 0, 4, 0, 5, 0},
@@ -35,6 +34,17 @@ public class Main {
                 {1, 0, 0, 0, 6, 0},
                 {0, 2, 0, 6, 0, 3},
                 {0, 0, 1, 0, 2, 0}
+        };
+        */
+
+        //for improvement
+        int[][] costMatrix = {
+                {0, 1, 0, 1, 0, 0},
+                {1, 0, 1, 0, 1, 0},
+                {0, 1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1, 0},
+                {0, 1, 0, 1, 0, 1},
+                {0, 0, 1, 0, 1, 0}
         };
 
         int m = 3, n = 2;
@@ -70,25 +80,20 @@ public class Main {
 
         solution.printAllocation();
 
-        Problem randomProblem = new Problem(m, n, costMatrix);
+
 
         int randomM = 0, randomN = 0;
         m = (int)Math.floor(Math.random()*(10 - 2 + 1) + 2);//m at least 2
         n = (int)Math.floor(Math.random()*(10 - 2 + 1) + 2);//n at least 2
+        System.out.println();
         System.out.println(m);
+        System.out.println();
         System.out.println(n);
+        System.out.println();
         int[][] randomCostMatrix = new int[m * n][m * n];
-        for (int i = 0; i < m*n; i++) {
-            for (int j = 0; j < m*n; j++) {
-                if (i == j) randomCostMatrix[i][j] = 0;
-                else if(i < m && (j == i + 1 || j == i + m)) {
-                    costMatrix[i][j] = (int) Math.floor(Math.random() * (9 - 1 + 1) + 1);
-                }
-                else {
-                    randomCostMatrix[i][j] = 0;
-                }
-            }
-        }
+        generateRandomCostMatrix(m, n, randomCostMatrix);
+
+        Problem randomProblem = new Problem(m, n, randomCostMatrix);
         generateProblem(randomProblem);
 
         for (int i = 0; i < m * n; i++) {
@@ -97,6 +102,22 @@ public class Main {
             }
             System.out.println();
         }
+
+        randomProblem.calculateAllShortestPaths(m, n);
+        randomProblem.printShortestPathMatrix();
+
+        //randomProblem.allocateClientsToVehicles();
+
+        Solution solution1 = new Solution();
+
+        Map<Client, Vehicle> allocation1 = randomProblem.getAllocationProblem();
+        solution1.setAllocation(allocation1);
+
+        System.out.println();
+        System.out.println("ALLOCATION : ");
+
+        solution1.printAllocation();
+
         Depot[] depots = randomProblem.getDepots();
 
         for(Depot depot : depots)
@@ -116,7 +137,6 @@ public class Main {
     }
 
     public static void generateProblem(Problem problem) {
-        Map<Client, Vehicle> allocation = new HashMap<>();
 
         //Integer.MAX_VALUE instead of 100 => ERROR
         int depotsRandomNumber = (int) Math.floor(Math.random() * (100 - 1 + 1) + 1); // at least 1 depot
@@ -137,12 +157,15 @@ public class Main {
             int depotNumber = (int) Math.floor(Math.random() * (depotsRandomNumber - 1 - 1 + 1) + 1);
             char indexCharVehicle = (char)('A' + depotNumber);
             String depotName = "Depot " + indexCharVehicle;
+            Depot depot = new Depot(depotName);
             if(truckOrDrone == 1) {
                 int capacity = (int) Math.floor(Math.random() * (1000 - 1 + 1) + 1);
-                problem.addVehicle(new Truck(name, new Depot(depotName), capacity));
+                problem.addVehicle(new Truck(name, depot, capacity));
+                depot.addVehicle(new Truck(name, depot, capacity));
             } else {
                 int flightDuration = (int) Math.floor(Math.random() * (1000 - 1 + 1) + 1);
-                problem.addVehicle(new Drone(name,  new Depot(depotName), flightDuration));
+                problem.addVehicle(new Drone(name,  depot, flightDuration));
+                depot.addVehicle(new Drone(name,  depot, flightDuration));
             }
             indexInt++;
         }
@@ -189,28 +212,42 @@ public class Main {
         }
     }
 
-    public static int[][] generateRandomCostMatrix(int m, int n) {
-        int[][] costMatrix = new int[m * n][m * n];
-        for (int i = 0; i < m*n; i++) {
-            for (int j = 0; j < m*n; j++) {
+    public static void generateRandomCostMatrix(int m, int n, int[][] costMatrix) {
+        int matrixLength = costMatrix.length;
+        for (int i = 0; i < matrixLength; i++) {
+            for (int j = 0; j < matrixLength; j++) {
                 if (i == j) costMatrix[i][j] = 0;
-                else if(i < m && (j == i + m || j == i + 1)) {
+                else if((i+1) % m == 0 && (j == i + m || j == i - 1 || j == i - m)) {
+                    costMatrix[i][j] = (int) Math.floor(Math.random() * (9 - 1 + 1) + 1);
+                } else if(i % m == 0 && (j == i + 1 || j == i + m || j == i - m)) {
                     costMatrix[i][j] = (int) Math.floor(Math.random() * (9 - 1 + 1) + 1);
                 }
-               // else if((i + 1) % m == 0  && (j == i - 1 || j == i + m || j == i - m)) {
-                    //costMatrix[i][j] = (int) Math.floor(Math.random() * (9 - 1 + 1) + 1);
-              //  } else if(i % m == 0 && (j == i + 1 || j == i + m || j == i - m)) {
-                  //  costMatrix[i][j] = (int) Math.floor(Math.random() * (9 - 1 + 1) + 1);
-               // }
-                //else if(j == i + 1 || j == i + m || j == i - m || j == i- 1) {
-                //    costMatrix[i][j] = (int) Math.floor(Math.random() * (9 - 1 + 1) + 1);
-               // }
-                else {
+                else if((i % m != 0 && (i + 1) % m != 0) && (j == i + 1 || j == i + m || j == i - m || j == i - 1)) {
+                    costMatrix[i][j] = (int) Math.floor(Math.random() * (9 - 1 + 1) + 1);
+               } else {
                     costMatrix[i][j] = 0;
                 }
             }
         }
-        return costMatrix;
+    }
+
+    public static void generateRandomCostMatrixAllWeightOne(int m, int n, int[][] costMatrix) {
+        int matrixLength = costMatrix.length;
+        for (int i = 0; i < matrixLength; i++) {
+            for (int j = 0; j < matrixLength; j++) {
+                if (i == j) costMatrix[i][j] = 0;
+                else if((i+1) % m == 0 && (j == i + m || j == i - 1 || j == i - m)) {
+                    costMatrix[i][j] = 1;
+                } else if(i % m == 0 && (j == i + 1 || j == i + m || j == i - m)) {
+                    costMatrix[i][j] = 1;
+                }
+                else if((i % m != 0 && (i + 1) % m != 0) && (j == i + 1 || j == i + m || j == i - m || j == i - 1)) {
+                    costMatrix[i][j] = 1;
+                } else {
+                    costMatrix[i][j] = 0;
+                }
+            }
+        }
     }
 }
 
