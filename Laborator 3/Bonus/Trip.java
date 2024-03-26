@@ -71,6 +71,53 @@ public class Trip {
 
     }
 
+    public Map<Attraction, LocalDate> visitDifferentTypesOfAttractionEveryDayLDF() {
+        Map<Attraction, Integer> coloring = coloringNodesGraph();//nodes color
+        Map<Attraction, LocalDate> visit = new HashMap<>();
+        long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
+        int[] colors = new int[(int) daysBetween];//keep the colors used for attractions
+        int index = 0;
+        for(LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            List<Attraction> sortedAttractions = new ArrayList<>(attractions);
+            sortedAttractions.sort(Comparator.comparingInt(a -> getDegree(a, coloring)));
+
+            for (Attraction attraction : sortedAttractions) {
+                Map<LocalDate, TimeInterval> timetable = new HashMap<>();
+                if(attraction instanceof Church || attraction instanceof Concert || attraction instanceof Museum || attraction instanceof Statue) {
+                    timetable = ((Visitable) attraction).getTimetable();
+                }
+
+                if(timetable.containsKey(date) && index != 0 && coloring.get(attraction) != colors[index - 1]) {
+                    //coloring.get(attraction) != colors[index - 1] actual and previous attraction has different types
+                    visit.put(attraction, date);
+                    colors[index] = coloring.get(attraction);
+                    index++;
+                } else if(index == 0 && timetable.containsKey(date)) {
+                    visit.put(attraction, date);
+                    colors[index] = coloring.get(attraction);
+                    index++;
+                }
+            }
+
+        }
+        return visit;
+    }
+
+    private int getDegree(Attraction attraction, Map<Attraction, Integer> coloring) {
+        int degree = 0;
+        int color = coloring.get(attraction);
+
+        for (Attraction adjacentAttraction : attractions) {
+            if (!adjacentAttraction.equals(attraction) && coloring.get(adjacentAttraction) == color) {
+                //attraction has the same color
+                degree++;
+            }
+        }
+
+        return degree;
+    }
+
+
     public Map<Attraction, LocalDate> visitDifferentTypesOfAttractionEveryDay() {
         Map<Attraction, Integer> coloring = coloringNodesGraph();//nodes color
         Map<Attraction, LocalDate> visit = new HashMap<>();
