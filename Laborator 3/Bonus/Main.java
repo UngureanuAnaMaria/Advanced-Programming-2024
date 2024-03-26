@@ -56,13 +56,16 @@ public class Main {
 
         trip.displayVisitableLocationsSortedByOpeningHour();
 
-        System.out.println("BONUS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
         Map<Attraction, LocalDate> visit = trip.visitDifferentTypesOfAttractionEveryDay();
 
         for(Map.Entry<Attraction, LocalDate> entry : visit.entrySet())
             System.out.println("Attraction : " + entry.getKey() + ", date : " + entry.getValue());
 
+        Map<Attraction, LocalDate> visitLdf = trip.visitDifferentTypesOfAttractionEveryDay();
+
+        for(Map.Entry<Attraction, LocalDate> entry : visitLdf.entrySet())
+            System.out.println("Attraction : " + entry.getKey() + ", date : " + entry.getValue());
+        
         TravelPlan travelPlan = new TravelPlan();
         travelPlan.addVisit(museum, LocalDate.of(2024, 3, 10));
         travelPlan.addVisit(church, LocalDate.of(2024, 3, 11));
