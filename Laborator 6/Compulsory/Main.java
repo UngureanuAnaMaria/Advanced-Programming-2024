@@ -16,12 +16,16 @@ public class Main {
         // Configuration panel
         JPanel configPanel = new JPanel();
         JLabel gridLabel = new JLabel("Grid Size:");
-        JTextField gridRowsField = new JTextField(5);
-        JTextField gridColsField = new JTextField(5);
+        //JTextField gridRowsField = new JTextField(5);
+        JSpinner rowSpinner = new JSpinner(new SpinnerNumberModel(10, 2, 100, 1));
+        //JTextField gridColsField = new JTextField(5);
+        JSpinner colSpinner = new JSpinner(new SpinnerNumberModel(10, 2, 100, 1));
         JButton newGameBtn = new JButton("Create");
         configPanel.add(gridLabel);
-        configPanel.add(gridRowsField);
-        configPanel.add(gridColsField);
+        //configPanel.add(gridRowsField);
+        configPanel.add(rowSpinner);
+       // configPanel.add(gridColsField);
+        configPanel.add(colSpinner);
         configPanel.add(newGameBtn);
 
         // Create a panel with buttons
@@ -41,8 +45,8 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
                 JPanel canva = new JPanel();
 
-                int rows = Integer.parseInt(gridRowsField.getText());
-                int cols = Integer.parseInt(gridColsField.getText());
+                int rows = (Integer) rowSpinner.getValue();
+                int cols = (Integer) colSpinner.getValue();
                 int canvasWidth = 400, canvasHeight = 400;
                 int stoneSize = 20;
                 int padX = stoneSize + 10;
@@ -82,6 +86,8 @@ public class Main {
                         int x = padX + col * cellWidth + 200;
                         int y = padY + row * cellHeight + 100;
                         g.setColor(Color.LIGHT_GRAY);
+                        if(rows >= 30 || cols >= 30) stoneSize = 10;
+                        if(rows >= 60 || cols >= 60) stoneSize = 5;
                         g.drawOval(x - stoneSize / 2, y - stoneSize / 2, stoneSize, stoneSize);
                     }
                 }
