@@ -11,6 +11,7 @@ import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 import org.jgrapht.alg.matching.DenseEdmondsMaximumCardinalityMatching;
 import org.graph4j.alg.matching.HopcroftKarpMaximumMatching;
 import org.graph4j.GraphBuilder;
+import org.jgrapht.alg.independentset.ChordalGraphIndependentSetFinder;
 
 public class Main {
     public static void main(String[] args) {
@@ -73,6 +74,22 @@ public class Main {
         long endTimeGraph4J = System.currentTimeMillis();
         System.out.println(matchingGraph4J.getMatching().toString());
 
+        SimpleGraph<Node, DefaultEdge> graph = createBipartiteGraphJGraphT(drivers, passengers);
+
+        //find maximum cardinality independent set
+        ChordalGraphIndependentSetFinder<Node, DefaultEdge> independentSetFinder =
+                new ChordalGraphIndependentSetFinder<>(graph);
+        Set<Node> independentSet = independentSetFinder.getIndependentSet();
+
+        if (independentSet != null) {
+            System.out.println("Non-overlapping matches:");
+            for (Node person : independentSet) {
+                System.out.println(((Person) person).getName());
+            }
+        } else {
+            System.out.println("Independent set is null.");
+        }
+        
         //compare execution times
         System.out.println("Execution time using JGraphT: " + (endTimeJGraphT - startTimeJGraphT) + " milliseconds");
         System.out.println("Execution time using Graph4J: " + (endTimeGraph4J - startTimeGraph4J) + " milliseconds");
