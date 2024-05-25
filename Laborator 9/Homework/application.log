@@ -1,0 +1,4 @@
+mai 21, 2024 11:08:38 A.M. com.nictas.eclipselink.postgresql.repos.DataRepository logExecutionTime
+INFO: Method findById executed in 10 ms
+mai 25, 2024 11:30:49 A.M. com.nictas.eclipselink.postgresql.repos.DataRepository logExecutionTime
+INFO: Method findById executed in 11 ms
