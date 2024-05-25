@@ -57,6 +57,13 @@ public class Main {
 
             List<List<Book>> readingLists = partitionIntoReadingLists(booksList);
 
+            for (int i = 0; i < readingLists.size(); i++) {
+                System.out.println("Reading List " + (i + 1) + ":");
+                for (Book book : readingLists.get(i)) {
+                    System.out.println(book.getTitle());
+                }
+                System.out.println();
+            }
 
             Database.getConnection().close();
         } catch (IOException | SQLException e) {
@@ -91,10 +98,10 @@ public class Main {
                     Database.getConnection().commit();
                     System.out.println("New book created: " + title);
                     booksList.add(book);
-                    if (book.getGenre() == "Tragedy") {
-                        readingList.addBook(book);
-                        System.out.println("New book created: " + title);
-                    }
+
+                    readingList.addBook(book);
+                    System.out.println("New book created: " + title);
+
                 }
             }
             System.out.println("Data imported successfully!");
@@ -103,17 +110,34 @@ public class Main {
     }
 
     public static List<List<Book>> partitionIntoReadingLists(List<Book> books) {
-        Map<Book, Set<Book>> relatedBooksMap = new HashMap<>();
+        Collections.sort(books, Comparator.comparing(Book::getAuthor).thenComparing(Book::getGenre));
 
+        List<List<Book>> readingLists = new ArrayList<>();
         for (Book book : books) {
-            relatedBooksMap.put(book, new HashSet<>());
-            for (Book otherBook : books) {
-                if (!book.equals(otherBook) &&
-                        (book.getAuthor().equals(otherBook.getAuthor()) || book.getGenre().equals(otherBook.getGenre()))) {
-                    relatedBooksMap.get(book).add(otherBook);
+            boolean added = false;
+            for (List<Book> readingList : readingLists) {
+                boolean related = false;
+                for (Book existingBook : readingList) {
+                    if (existingBook.getAuthor().equals(book.getAuthor()) || existingBook.getGenre().equals(book.getGenre())) {
+                        related = true;
+                        break;
+                    }
+                }
+
+                if (!related) {
+                    readingList.add(book);
+                    added = true;
+                    break;
                 }
             }
+
+            //not added to an existing list => create a new list
+            if (!added) {
+                List<Book> newReadingList = new ArrayList<>();
+                newReadingList.add(book);
+                readingLists.add(newReadingList);
+            }
         }
-        return null;
+        return readingLists;
     }
 }
