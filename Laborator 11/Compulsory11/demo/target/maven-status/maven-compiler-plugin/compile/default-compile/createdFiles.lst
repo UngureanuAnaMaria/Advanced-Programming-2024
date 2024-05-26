@@ -1,0 +1,4 @@
+com\example\demo\api\controller\PlayerController.class
+com\example\demo\api\model\Player.class
+com\example\demo\DemoApplication.class
+com\example\demo\service\PlayerService.class
