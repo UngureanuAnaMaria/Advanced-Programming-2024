@@ -1,4 +1,4 @@
-com\example\demo\api\controller\PlayerController.class
-com\example\demo\api\model\Player.class
+com\example\demo\api\controller\AuthorController.class
+com\example\demo\api\model\Author.class
 com\example\demo\DemoApplication.class
-com\example\demo\service\PlayerService.class
+com\example\demo\service\AuthorService.class
