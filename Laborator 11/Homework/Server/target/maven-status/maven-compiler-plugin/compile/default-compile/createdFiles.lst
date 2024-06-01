@@ -1,0 +1,4 @@
+io\javabrains\springboot\swagger2\Application.class
+io\javabrains\springboot\swagger2\api\model\Book.class
+io\javabrains\springboot\swagger2\service\BookService.class
+io\javabrains\springboot\swagger2\api\controller\BookController.class
