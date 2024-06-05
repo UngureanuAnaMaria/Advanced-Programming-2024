@@ -1,0 +1,5 @@
+org\example\Calculator.class
+org\example\ClassAnalyzer$Test.class
+org\example\ClassAnalyzer.class
+org\example\TestClassAnalyzer.class
+org\example\JarUtils.class
